@@ -16,15 +16,31 @@ const EMOJI: Record<Gesture, string> = {
 
 type GestureDisplayProps = {
   gesture: Gesture
+  caption?: string
+  size?: 'normal' | 'large'
 }
 
-export function GestureDisplay({ gesture }: GestureDisplayProps) {
+export function GestureDisplay({
+  gesture,
+  caption,
+  size = 'normal',
+}: GestureDisplayProps) {
+  const emojiSize = size === 'large' ? 'text-7xl' : 'text-5xl'
+  const labelSize = size === 'large' ? 'text-5xl' : 'text-3xl'
+
   return (
     <div className="flex flex-col items-center gap-2 text-center">
-      <span className="text-5xl" aria-hidden="true">
+      {caption ? (
+        <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--ink-soft)]">
+          {caption}
+        </p>
+      ) : null}
+      <span className={emojiSize} aria-hidden="true">
         {EMOJI[gesture]}
       </span>
-      <p className="display-title text-3xl font-bold text-[var(--neon-bright)]">
+      <p
+        className={`display-title ${labelSize} font-bold text-[var(--neon-bright)]`}
+      >
         {LABELS[gesture]}
       </p>
     </div>
