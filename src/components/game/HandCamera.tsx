@@ -7,6 +7,7 @@ type HandCameraProps = {
   landmarksRef: React.RefObject<Landmark[] | null>
   connections: Array<{ start: number; end: number }>
   active: boolean
+  className?: string
 }
 
 export function HandCamera({
@@ -14,6 +15,7 @@ export function HandCamera({
   landmarksRef,
   connections,
   active,
+  className,
 }: HandCameraProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rafRef = useRef<number>(0)
@@ -39,7 +41,15 @@ export function HandCamera({
   }, [videoRef])
 
   useEffect(() => {
+    const canvas = canvasRef.current
+
     if (!active) {
+      if (canvas) {
+        const ctx = canvas.getContext('2d')
+        if (ctx) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+        }
+      }
       return
     }
 
@@ -75,7 +85,12 @@ export function HandCamera({
   }, [active, landmarksRef, connections])
 
   return (
-    <div className="relative aspect-[4/3] w-full max-w-xl overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--bg-elevated)] shadow-[0_0_20px_rgba(57,255,20,0.08)]">
+    <div
+      className={
+        className ??
+        'relative aspect-[4/3] w-full max-w-xl overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--bg-elevated)] shadow-[0_0_20px_rgba(57,255,20,0.08)]'
+      }
+    >
       <video
         ref={videoRef}
         className="h-full w-full scale-x-[-1] object-cover"

@@ -1,8 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { Gesture } from '@/lib/game/types'
+import { getComputerGesture } from '@/lib/game/outcome'
+import { COMPUTER_REVEAL_MS } from '@/lib/game/timing'
+import type { Gesture, PlayableGesture } from '@/lib/game/types'
 
-export type RoundPhase = 'ready' | 'countdown' | 'hold' | 'judging' | 'result'
-export type PlayableGesture = Exclude<Gesture, 'none'>
+export type RoundPhase =
+  | 'ready'
+  | 'countdown'
+  | 'hold'
+  | 'judging'
+  | 'reveal'
+  | 'result'
+export type RoundWinner = 'player' | 'computer'
+export type { PlayableGesture }
 
 const COUNTDOWN_SEQUENCE = [3, 2, 1] as const
 const COUNTDOWN_TICK_MS = 1000
@@ -14,20 +23,33 @@ function isPlayableGesture(gesture: Gesture): gesture is PlayableGesture {
   return gesture !== 'none'
 }
 
-export function useRound(liveGesture: Gesture) {
+export function useRound(
+  liveGesture: Gesture,
+  playerAlwaysWins: boolean,
+) {
   const [phase, setPhase] = useState<RoundPhase>('ready')
   const [countdownIndex, setCountdownIndex] = useState(0)
   const [lockedGesture, setLockedGesture] = useState<PlayableGesture | null>(null)
+  const [computerGesture, setComputerGesture] = useState<PlayableGesture | null>(
+    null,
+  )
   const [noShow, setNoShow] = useState(false)
+  const [roundWinner, setRoundWinner] = useState<RoundWinner | null>(null)
+  const [sessionScore, setSessionScore] = useState({ player: 0, computer: 0 })
   const liveGestureRef = useRef(liveGesture)
   liveGestureRef.current = liveGesture
+  const playerAlwaysWinsRef = useRef(playerAlwaysWins)
+  playerAlwaysWinsRef.current = playerAlwaysWins
+  const pendingWinnerRef = useRef<RoundWinner | null>(null)
 
   const countdownValue =
     phase === 'countdown' ? COUNTDOWN_SEQUENCE[countdownIndex] : null
 
   const startRound = useCallback(() => {
     setLockedGesture(null)
+    setComputerGesture(null)
     setNoShow(false)
+    setRoundWinner(null)
     setCountdownIndex(0)
     setPhase('countdown')
   }, [])
@@ -81,14 +103,26 @@ export function useRound(liveGesture: Gesture) {
     let retryTimer = 0
 
     const finishWithGesture = (gesture: PlayableGesture) => {
+      const easyMode = playerAlwaysWinsRef.current
+      const winner: RoundWinner = easyMode ? 'player' : 'computer'
       setLockedGesture(gesture)
+      setComputerGesture(
+        getComputerGesture(gesture, { playerAlwaysWins: easyMode }),
+      )
       setNoShow(false)
-      setPhase('result')
+      pendingWinnerRef.current = winner
+      setPhase('reveal')
     }
 
     const finishWithNoShow = () => {
       setLockedGesture(null)
+      setComputerGesture(null)
       setNoShow(true)
+      setRoundWinner('computer')
+      setSessionScore((score) => ({
+        ...score,
+        computer: score.computer + 1,
+      }))
       setPhase('result')
     }
 
@@ -120,11 +154,37 @@ export function useRound(liveGesture: Gesture) {
     }
   }, [phase])
 
+  useEffect(() => {
+    if (phase !== 'reveal') {
+      return
+    }
+
+    const timer = window.setTimeout(() => {
+      const winner = pendingWinnerRef.current
+      if (winner) {
+        setRoundWinner(winner)
+        setSessionScore((score) => ({
+          ...score,
+          [winner]: score[winner] + 1,
+        }))
+        pendingWinnerRef.current = null
+      }
+      setPhase('result')
+    }, COMPUTER_REVEAL_MS)
+
+    return () => {
+      window.clearTimeout(timer)
+    }
+  }, [phase])
+
   return {
     phase,
     countdownValue,
     lockedGesture,
+    computerGesture,
     noShow,
+    roundWinner,
+    sessionScore,
     startRound,
     playAgain,
   }

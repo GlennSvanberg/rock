@@ -44,10 +44,39 @@ export function distance(a: Landmark, b: Landmark): number {
   return Math.sqrt(dx * dx + dy * dy + dz * dz)
 }
 
-function palmScale(landmarks: Landmark[]): number {
+export function palmScale(landmarks: Landmark[]): number {
   const wristToMiddle = distance(landmarks[WRIST], landmarks[MIDDLE_MCP])
   const indexToPinky = distance(landmarks[INDEX_MCP], landmarks[PINKY_MCP])
   return Math.max(wristToMiddle, indexToPinky, 0.05)
+}
+
+export function cloneLandmarks(landmarks: Landmark[]): Landmark[] {
+  return landmarks.map((landmark) => ({ ...landmark }))
+}
+
+/** Flip horizontally so the opponent mirrors the player's on-screen hand. */
+export function mirrorLandmarks(landmarks: Landmark[]): Landmark[] {
+  return landmarks.map((landmark) => ({
+    ...landmark,
+    x: 1 - landmark.x,
+    z: -landmark.z,
+  }))
+}
+
+/** Scale and translate a template pose to match a reference hand's position and size. */
+export function fitPoseToHand(
+  template: Landmark[],
+  reference: Landmark[],
+): Landmark[] {
+  const refWrist = reference[WRIST]
+  const tplWrist = template[WRIST]
+  const scale = palmScale(reference) / palmScale(template)
+
+  return template.map((landmark) => ({
+    x: refWrist.x + (landmark.x - tplWrist.x) * scale,
+    y: refWrist.y + (landmark.y - tplWrist.y) * scale,
+    z: refWrist.z + (landmark.z - tplWrist.z) * scale,
+  }))
 }
 
 export function getFingerExtensionScore(
