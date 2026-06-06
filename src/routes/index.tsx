@@ -21,9 +21,9 @@ function Home() {
         </div>
       </header>
 
-      <main className="page-wrap py-16">
-        <section className="rise-in island-shell rounded-2xl p-10 md:p-14">
-          <h1 className="display-title text-4xl font-bold tracking-tight text-[var(--ink)] md:text-5xl">
+      <main className="page-wrap py-8 sm:py-16">
+        <section className="rise-in island-shell rounded-2xl p-6 sm:p-10 md:p-14">
+          <h1 className="display-title text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl md:text-5xl">
             Rock Paper Scissors
           </h1>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-[var(--ink-soft)]">

@@ -25,24 +25,17 @@ export function GestureDisplay({
   caption,
   size = 'normal',
 }: GestureDisplayProps) {
-  const emojiSize = size === 'large' ? 'text-7xl' : 'text-5xl'
-  const labelSize = size === 'large' ? 'text-5xl' : 'text-3xl'
+  const isLarge = size === 'large'
 
   return (
-    <div className="flex flex-col items-center gap-2 text-center">
+    <div className={`gesture-display${isLarge ? ' gesture-display--large' : ''}`}>
       {caption ? (
-        <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--ink-soft)]">
-          {caption}
-        </p>
+        <p className="gesture-display__caption">{caption}</p>
       ) : null}
-      <span className={emojiSize} aria-hidden="true">
+      <span className="gesture-display__emoji" aria-hidden="true">
         {EMOJI[gesture]}
       </span>
-      <p
-        className={`display-title ${labelSize} font-bold text-[var(--neon-bright)]`}
-      >
-        {LABELS[gesture]}
-      </p>
+      <p className="gesture-display__label">{LABELS[gesture]}</p>
     </div>
   )
 }

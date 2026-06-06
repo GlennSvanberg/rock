@@ -28,12 +28,12 @@ export function ComputerPanel({
       <div className="game-panel-label flex items-end justify-between gap-3">
         <div>
           <p className="island-kicker">Opponent</p>
-          <h2 className="display-title text-lg font-bold text-[var(--ink)]">
+          <h2 className="display-title font-bold text-[var(--ink)]">
             Computer
           </h2>
         </div>
         <p
-          className="display-title text-2xl font-bold tabular-nums text-[var(--neon-bright)] sm:text-3xl"
+          className="game-panel-score display-title font-bold tabular-nums text-[var(--neon-bright)]"
           aria-label={`Computer wins: ${sessionWins}`}
         >
           {sessionWins}

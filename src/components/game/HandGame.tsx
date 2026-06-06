@@ -105,18 +105,18 @@ export function HandGame() {
   return (
     <div className="game-screen">
       <header className="game-header">
-        <div>
+        <div className="game-header-title">
           <p className="island-kicker mb-0.5">Vs computer</p>
-          <h1 className="display-title text-xl font-bold text-[var(--ink)] sm:text-2xl">
+          <h1 className="display-title font-bold text-[var(--ink)]">
             Rock Paper Scissors
           </h1>
           {cheatHint ? (
-            <p className="mt-1 text-xs font-medium uppercase tracking-[0.12em] text-[var(--ink-soft)]">
+            <p className="game-cheat-hint mt-0.5 text-xs font-medium uppercase tracking-[0.12em] text-[var(--ink-soft)]">
               {cheatHint}
             </p>
           ) : null}
         </div>
-        <div className="flex shrink-0 items-center gap-3">
+        <div className="game-header-actions">
           <HandTrackingToggle
             checked={showHandTracking}
             disabled={!modelReady}
@@ -124,7 +124,7 @@ export function HandGame() {
           />
           <Link
             to="/"
-            className="rounded-full border border-[var(--line)] bg-[var(--chip-bg)] px-4 py-2 text-sm font-semibold text-[var(--ink)] hover:border-[var(--neon-dim)] hover:bg-[var(--link-bg-hover)] hover:text-[var(--neon-bright)]"
+            className="rounded-full border border-[var(--line)] bg-[var(--chip-bg)] px-3 py-1.5 text-xs font-semibold text-[var(--ink)] hover:border-[var(--neon-dim)] hover:bg-[var(--link-bg-hover)] hover:text-[var(--neon-bright)] sm:px-4 sm:py-2 sm:text-sm"
           >
             Home
           </Link>
@@ -154,17 +154,18 @@ export function HandGame() {
         </div>
       )}
 
-      <div className="game-arena">
+      <div className="game-main">
+        <div className="game-arena">
         <div className="game-panel game-panel--player">
           <div className="game-panel-label flex items-end justify-between gap-3">
             <div>
               <p className="island-kicker">Player</p>
-              <h2 className="display-title text-lg font-bold text-[var(--ink)]">
+              <h2 className="display-title font-bold text-[var(--ink)]">
                 You
               </h2>
             </div>
             <p
-              className="display-title text-2xl font-bold tabular-nums text-[var(--neon-bright)] sm:text-3xl"
+              className="game-panel-score display-title font-bold tabular-nums text-[var(--neon-bright)]"
               aria-label={`Your wins: ${sessionScore.player}`}
             >
               {sessionScore.player}
@@ -201,17 +202,18 @@ export function HandGame() {
           roundWinner={roundWinner}
           sessionWins={sessionScore.computer}
         />
-      </div>
+        </div>
 
-      <PlayersGestureBar
-        phase={phase}
-        lockedGesture={lockedGesture}
-        computerGesture={computerGesture}
-        noShow={noShow}
-        roundWinner={roundWinner}
-      />
+        <div className="game-footer">
+          <PlayersGestureBar
+            phase={phase}
+            lockedGesture={lockedGesture}
+            computerGesture={computerGesture}
+            noShow={noShow}
+            roundWinner={roundWinner}
+          />
 
-      <footer className="game-controls">
+          <footer className="game-controls">
         {phase === 'ready' && (
           <>
             <p className="text-center text-sm text-[var(--ink-soft)]">
@@ -243,7 +245,9 @@ export function HandGame() {
             Play again
           </button>
         )}
-      </footer>
+          </footer>
+        </div>
+      </div>
     </div>
   )
 }

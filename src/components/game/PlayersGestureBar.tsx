@@ -12,11 +12,9 @@ type PlayersGestureBarProps = {
 
 function WaitingSlot({ label }: { label: string }) {
   return (
-    <div className="flex flex-1 flex-col items-center gap-2 text-center">
-      <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--ink-soft)]">
-        {label}
-      </p>
-      <span className="text-5xl text-[var(--ink-soft)] opacity-40" aria-hidden="true">
+    <div className="gesture-display">
+      <p className="gesture-display__caption">{label}</p>
+      <span className="gesture-waiting__dots" aria-hidden="true">
         ···
       </span>
     </div>
@@ -41,16 +39,12 @@ export function PlayersGestureBar({
       <div className="game-bottom-gestures">
         <div className="game-bottom-player">
           {isResult && noShow ? (
-            <div className="flex flex-col items-center gap-2 text-center">
-              <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--ink-soft)]">
-                You
-              </p>
-              <span className="text-5xl" aria-hidden="true">
+            <div className="gesture-display">
+              <p className="gesture-display__caption">You</p>
+              <span className="gesture-display__emoji" aria-hidden="true">
                 🫥
               </span>
-              <p className="display-title text-xl font-bold text-[var(--neon-bright)] sm:text-2xl">
-                No show
-              </p>
+              <p className="gesture-display__label">No show</p>
             </div>
           ) : showPlayerGesture ? (
             <GestureDisplay
@@ -73,16 +67,12 @@ export function PlayersGestureBar({
               size="normal"
             />
           ) : isResult && noShow ? (
-            <div className="flex flex-col items-center gap-2 text-center">
-              <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--ink-soft)]">
-                Computer — wins
-              </p>
-              <span className="text-5xl" aria-hidden="true">
+            <div className="gesture-display">
+              <p className="gesture-display__caption">Computer — wins</p>
+              <span className="gesture-display__emoji" aria-hidden="true">
                 🤖
               </span>
-              <p className="display-title text-xl font-bold text-[var(--neon-bright)] sm:text-2xl">
-                Wins
-              </p>
+              <p className="gesture-display__label">Wins</p>
             </div>
           ) : (
             <WaitingSlot label="Computer" />
